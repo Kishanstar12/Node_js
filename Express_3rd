@@ -1,0 +1,45 @@
+const express = require("express");
+const bodyParser = require("body-parser");
+
+const app = express();
+
+// Use body-parser's JSON middleware to parse request bodies
+app.use(bodyParser.json());
+
+// Use middleware to show the form for adding a product
+app.use("/add-product", (req, res, next) => {
+  if (req.method === "GET") {
+    res.send(`
+      <form action="/add-product" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" required>
+        
+        <input type="submit" value="Add Product">
+      </form>
+    `);
+  } else {
+    next();
+  }
+});
+
+// Use middleware to handle the form submission
+app.use("/add-product", (req, res) => {
+  if (req.method === "POST") {
+    const product = {
+      name: req.body.name,
+      price: req.body.price,
+    };
+    
+    console.log("Received product:", product);
+    
+    res.send("Product added successfully!");
+  }
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
